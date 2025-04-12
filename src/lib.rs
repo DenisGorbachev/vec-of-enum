@@ -1,3 +1,93 @@
+//! A simple crate for creating typed vector wrappers around enums.
+//!
+//! This crate provides macros that help define a transparent wrapper around a `Vec<EnumType>`,
+//! automatically implementing useful traits and conversion functions for ergonomic use.
+//!
+//! # Examples
+//!
+//! ```rust
+//! use derive_more::{Constructor, From};
+//! use serde::{Deserialize, Serialize};
+//!
+//! // Define some sample action structs
+//! #[derive(Constructor, Serialize, Deserialize)]
+//! pub struct SignUpAction {
+//!     username: String,
+//!     password: String,
+//! }
+//!
+//! #[derive(Constructor, Serialize, Deserialize)]
+//! pub struct SendMessageAction {
+//!     from: String,
+//!     to: String,
+//!     text: String,
+//! }
+//!
+//! // Define an enum that can contain any action
+//! #[derive(From, Serialize, Deserialize)]
+//! pub enum Action {
+//!     SignUp(SignUpAction),
+//!     SendMessage(SendMessageAction),
+//! }
+//!
+//! // Convenience conversion
+//! impl From<(&str, &str)> for Action {
+//!     fn from((username, password): (&str, &str)) -> Self {
+//!         Self::SignUp(SignUpAction::new(username.into(), password.into()))
+//!     }
+//! }
+//!
+//! // Define a typed vector wrapper for Actions
+//! vec_of_enum::define!(
+//!     #[derive(Serialize, Deserialize)]
+//!     pub struct ActionVec(Vec<Action>);
+//! );
+//!
+//! // Define a typed vector wrapper that also automatically converts from variant types
+//! vec_of_enum::define!(
+//!     #[derive(Serialize, Deserialize)]
+//!     pub struct ActionVecWithVariants(Vec<Action>);
+//!     variants = [SignUpAction, SendMessageAction];
+//! );
+//!
+//! // Usage
+//! let mut actions = ActionVec::default();
+//! // No need to call Action::from
+//! actions.push(SignUpAction::new("alice".into(), "qwerty".into()));
+//! // Even shorter if you have `impl From<(&str, &str)> for Action`
+//! actions.push(("alice", "qwerty"));
+//! ```
+//!
+//! # Features
+//!
+//! The wrapper struct created using the `define!` macro:
+//!
+//! - Is `#[repr(transparent)]` for zero-cost abstraction
+//! - Implements `Deref` and `DerefMut` to `Vec<T>` for access to all Vec methods
+//! - Provides `new()`, `push()`, and `extend_from()` methods
+//! - Implements `Default`, `Extend`, `IntoIterator`, `From<Vec<T>>`, and `Into<Vec<T>>`
+//! - Supports automatic conversions from variant types when using the `variants = [...]` option
+//!
+//! # Custom Derives
+//!
+//! You can add any derive macros to your struct definition, and they will be applied to
+//! the generated struct. For example:
+//!
+//! ```rust
+//! use serde::{Deserialize, Serialize};
+//!
+//! #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+//! pub enum MyEnum {}
+//!
+//! vec_of_enum::define!(
+//!     #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+//!     pub struct MyVec(Vec<MyEnum>);
+//! );
+//! ```
+//!
+//! This allows you to add any necessary derives that your application requires.
+//! ```
+
 #[macro_export]
 macro_rules! define {
     (
@@ -6,21 +96,21 @@ macro_rules! define {
         $(where [$($where_clause:tt)*])?;
         $(variants = [$($variant:ty),+];)?
     ) => {
-        define_struct!(
+        $crate::define_struct!(
             $(#[$meta])*
             $vis struct $name(Vec<$inner>)
             $(where [$($where_clause)*])?;
         );
-        impl_self!($name, $inner);
-        impl_default!($name);
-        impl_extend!($name, $inner);
-        impl_into_iter_own!($name, $inner);
-        impl_into_iter_ref!($name, $inner);
-        impl_deref!($name, $inner);
-        impl_deref_mut!($name, $inner);
-        impl_from_vec!($name, $inner);
-        impl_into_vec!($name, $inner);
-        $(impl_from_value!($name, [$($variant),+]);)?
+        $crate::impl_self!($name, $inner);
+        $crate::impl_default!($name);
+        $crate::impl_extend!($name, $inner);
+        $crate::impl_into_iter_own!($name, $inner);
+        $crate::impl_into_iter_ref!($name, $inner);
+        $crate::impl_deref!($name, $inner);
+        $crate::impl_deref_mut!($name, $inner);
+        $crate::impl_from_vec!($name, $inner);
+        $crate::impl_into_vec!($name, $inner);
+        $($crate::impl_from_value!($name, [$($variant),+]);)?
     };
 }
 
@@ -146,7 +236,7 @@ macro_rules! impl_from_vec {
 macro_rules! impl_from_value {
     ($name:ident, [$($value_source:ty),+]) => {
         $(
-            impl_from_value!($name, $value_source);
+            $crate::impl_from_value!($name, $value_source);
         )+
     };
     ($name:ident, $value_source:ty) => {
@@ -167,56 +257,4 @@ macro_rules! impl_into_vec {
             }
         }
     };
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use derive_more::{Constructor, From};
-    use serde::{Deserialize, Serialize};
-
-    #[derive(Constructor, Serialize, Deserialize)]
-    pub struct SignUpAction {
-        username: String,
-        password: String,
-    }
-
-    #[derive(Constructor, Serialize, Deserialize)]
-    pub struct SendMessageAction {
-        from: String,
-        to: String,
-        text: String,
-    }
-
-    #[derive(From, Serialize, Deserialize)]
-    pub enum Action {
-        SignUp(SignUpAction),
-        SendMessage(SendMessageAction),
-    }
-
-    impl From<(&str, &str)> for Action {
-        fn from((username, password): (&str, &str)) -> Self {
-            Self::SignUp(SignUpAction::new(username.into(), password.into()))
-        }
-    }
-
-    define!(
-        #[derive(Serialize, Deserialize)]
-        pub struct ActionVec(Vec<Action>);
-    );
-
-    define!(
-        #[derive(Serialize, Deserialize)]
-        pub struct ActionVecWithVariants(Vec<Action>);
-        variants = [SignUpAction, SendMessageAction];
-    );
-
-    #[test]
-    fn supports_from() {
-        let mut actions = ActionVec::default();
-        // no need to call Action::from
-        actions.push(SignUpAction::new("alice".into(), "qwerty".into()));
-        // even shorter if you have `impl From<(&str, &str)> for Action`
-        actions.push(("alice", "qwerty"));
-    }
 }

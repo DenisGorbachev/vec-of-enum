@@ -21,3 +21,6 @@ readme = {}
 [dev-dependencies]
 derive_more = { version = "2.0.1", features = ["full"] }
 serde = { version = "1.0.219", features = ["derive"] }
+
+[package.metadata.cargo-machete]
+ignored = ["derive_more", "serde"]
