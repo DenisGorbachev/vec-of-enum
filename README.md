@@ -4,7 +4,7 @@
 
 # Helper macros for definind a vector of enum values
 
-This is a module-level comment for a Rust lib
+
 
 ## Installation
 
