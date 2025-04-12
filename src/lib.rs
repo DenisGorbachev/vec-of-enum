@@ -1,11 +1,12 @@
 #[macro_export]
-macro_rules! impl_all {
+macro_rules! define {
     (
         $(#[$meta:meta])*
         $vis:vis struct $name:ident(Vec<$inner:ty>)
-        $(where [$($where_clause:tt)*])?$(;)?
+        $(where [$($where_clause:tt)*])?;
+        $(variants = [$($variant:ty),+];)?
     ) => {
-        def!(
+        define_struct!(
             $(#[$meta])*
             $vis struct $name(Vec<$inner>)
             $(where [$($where_clause)*])?;
@@ -14,17 +15,21 @@ macro_rules! impl_all {
         impl_extend!($name, $inner);
         impl_into_iter_own!($name, $inner);
         impl_into_iter_ref!($name, $inner);
+        impl_deref!($name, $inner);
+        impl_deref_mut!($name, $inner);
+        impl_from_vec!($name, $inner);
+        impl_into_vec!($name, $inner);
+        $(impl_from_value!($name, [$($variant),+]);)?
     };
 }
 
 #[macro_export]
-macro_rules! def {
+macro_rules! define_struct {
     (
         $(#[$meta:meta])*
         $vis:vis struct $name:ident(Vec<$inner:ty>)
-        $(where [$($where_clause:tt)*])?$(;)?
+        $(where [$($where_clause:tt)*])?;
     ) => {
-        #[derive(derive_more::Deref, derive_more::DerefMut, derive_more::From, derive_more::Into)]
         #[repr(transparent)]
         $(#[$meta])*
         $vis struct $name(Vec<$inner>)
@@ -96,16 +101,62 @@ macro_rules! impl_into_iter_ref {
 }
 
 #[macro_export]
-macro_rules! impl_from {
+macro_rules! impl_deref {
+    ($name:ident, $inner:ty) => {
+        impl std::ops::Deref for $name {
+            type Target = Vec<$inner>;
+
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! impl_deref_mut {
+    ($name:ident, $inner:ty) => {
+        impl std::ops::DerefMut for $name {
+            fn deref_mut(&mut self) -> &mut Self::Target {
+                &mut self.0
+            }
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! impl_from_vec {
+    ($name:ident, $inner:ty) => {
+        impl From<Vec<$inner>> for $name {
+            fn from(vec: Vec<$inner>) -> Self {
+                Self(vec)
+            }
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! impl_from_value {
     ($name:ident, [$($value_source:ty),+]) => {
         $(
-            impl_from!($name, $value_source);
+            impl_from_value!($name, $value_source);
         )+
     };
     ($name:ident, $value_source:ty) => {
         impl From<$value_source> for $name {
             fn from(source: $value_source) -> Self {
                 Self(vec![source.into()])
+            }
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! impl_into_vec {
+    ($name:ident, $inner:ty) => {
+        impl From<$name> for Vec<$inner> {
+            fn from(value: $name) -> Self {
+                value.0
             }
         }
     };
@@ -131,15 +182,30 @@ mod tests {
 
     #[derive(Serialize, Deserialize)]
     pub enum Action {
-        SendMessage(SendMessageAction),
         SignUp(SignUpAction),
+        SendMessage(SendMessageAction),
     }
 
-    impl_all!(
+    impl From<SignUpAction> for Action {
+        fn from(value: SignUpAction) -> Self {
+            Self::SignUp(value)
+        }
+    }
+
+    impl From<SendMessageAction> for Action {
+        fn from(value: SendMessageAction) -> Self {
+            Self::SendMessage(value)
+        }
+    }
+
+    define!(
         #[derive(Serialize, Deserialize)]
         pub struct ActionVec(Vec<Action>);
     );
 
-    #[derive(derive_more::Deref, derive_more::DerefMut, derive_more::From, derive_more::Into)]
-    pub struct ActionVecDeriveMore(Vec<Action>);
+    define!(
+        #[derive(Serialize, Deserialize)]
+        pub struct ActionVecWithVariants(Vec<Action>);
+        variants = [SignUpAction, SendMessageAction];
+    );
 }
