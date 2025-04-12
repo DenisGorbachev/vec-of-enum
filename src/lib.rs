@@ -12,6 +12,7 @@ macro_rules! define {
             $(where [$($where_clause)*])?;
         );
         impl_self!($name, $inner);
+        impl_default!($name);
         impl_extend!($name, $inner);
         impl_into_iter_own!($name, $inner);
         impl_into_iter_ref!($name, $inner);
@@ -45,17 +46,23 @@ macro_rules! impl_self {
                 Self(inner.into())
             }
 
-            /// Use this function instead of [`Default::default`] because `Default::default` requires `A: Default`, which might not be implemented
-            pub fn empty() -> Self {
-                Self(vec![])
-            }
-
             pub fn push(&mut self, value: impl Into<$inner>) {
                 self.0.push(value.into())
             }
 
             pub fn extend_from<T: Into<$inner>>(&mut self, iter: impl IntoIterator<Item = T>) {
                 self.extend(iter.into_iter().map(T::into))
+            }
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! impl_default {
+    ($name:ident) => {
+        impl Default for $name {
+            fn default() -> Self {
+                Self(Default::default())
             }
         }
     };
@@ -165,36 +172,31 @@ macro_rules! impl_into_vec {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use derive_more::{Constructor, From};
     use serde::{Deserialize, Serialize};
 
-    #[derive(Serialize, Deserialize)]
+    #[derive(Constructor, Serialize, Deserialize)]
     pub struct SignUpAction {
         username: String,
         password: String,
     }
 
-    #[derive(Serialize, Deserialize)]
+    #[derive(Constructor, Serialize, Deserialize)]
     pub struct SendMessageAction {
         from: String,
         to: String,
         text: String,
     }
 
-    #[derive(Serialize, Deserialize)]
+    #[derive(From, Serialize, Deserialize)]
     pub enum Action {
         SignUp(SignUpAction),
         SendMessage(SendMessageAction),
     }
 
-    impl From<SignUpAction> for Action {
-        fn from(value: SignUpAction) -> Self {
-            Self::SignUp(value)
-        }
-    }
-
-    impl From<SendMessageAction> for Action {
-        fn from(value: SendMessageAction) -> Self {
-            Self::SendMessage(value)
+    impl From<(&str, &str)> for Action {
+        fn from((username, password): (&str, &str)) -> Self {
+            Self::SignUp(SignUpAction::new(username.into(), password.into()))
         }
     }
 
@@ -208,4 +210,13 @@ mod tests {
         pub struct ActionVecWithVariants(Vec<Action>);
         variants = [SignUpAction, SendMessageAction];
     );
+
+    #[test]
+    fn supports_from() {
+        let mut actions = ActionVec::default();
+        // no need to call Action::from
+        actions.push(SignUpAction::new("alice".into(), "qwerty".into()));
+        // even shorter if you have `impl From<(&str, &str)> for Action`
+        actions.push(("alice", "qwerty"));
+    }
 }
