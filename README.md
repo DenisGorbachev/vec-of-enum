@@ -108,3 +108,9 @@ cargo add vec-of-enum
 ## Gratitude
 
 Like the project? [⭐ Star this repo](https://github.com/DenisGorbachev/vec-of-enum) on GitHub!
+
+## License
+
+[Apache-2.0](LICENSE-APACHE) or [MIT](LICENSE-MIT).
+
+Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in this crate by you, shall be licensed as above, without any additional terms or conditions.
