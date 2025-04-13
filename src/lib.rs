@@ -1,61 +1,109 @@
-//! A simple crate for creating typed vector wrappers around enums.
+//! A helper struct to manage a `Vec` of `enum` values. Reduces boilerplate, implements useful traits.
 //!
-//! This crate provides macros that help define a transparent wrapper around a `Vec<EnumType>`,
-//! automatically implementing useful traits and conversion functions for ergonomic use.
+//! ```rust
+//! # use derive_more::{Constructor, From};
+//! # use serde::{Deserialize, Serialize};
+//! #
+//! # // Define some sample validation error structs
+//! # #[derive(Constructor, Serialize, Deserialize)]
+//! # pub struct PasswordMinLengthError {
+//! #     min_length: usize,
+//! # }
+//! #
+//! # #[derive(Constructor, Serialize, Deserialize)]
+//! # pub struct InvalidEmailError {
+//! #     email: String,
+//! #     reason: String,
+//! # }
+//! #
+//! # // Define an enum that can contain any validation error
+//! # #[derive(From, Serialize, Deserialize)]
+//! # pub enum ValidationError {
+//! #     PasswordMinLength(PasswordMinLengthError),
+//! #     InvalidEmail(InvalidEmailError),
+//! # }
+//! #
+//! # // Convenience conversion
+//! # impl From<(&str, &str)> for ValidationError {
+//! #     fn from((email, reason): (&str, &str)) -> Self {
+//! #         Self::InvalidEmail(InvalidEmailError::new(email.into(), reason.into()))
+//! #     }
+//! # }
+//! #
+//! # // Define a typed vector wrapper for ValidationErrors
+//! # vec_of_enum::define!(
+//! #     #[derive(Serialize, Deserialize)]
+//! #     pub struct ValidationErrors(Vec<ValidationError>);
+//! # );
+//! #
+//! # // Define a typed vector wrapper that also automatically converts from variant types
+//! # vec_of_enum::define!(
+//! #     #[derive(Serialize, Deserialize)]
+//! #     pub struct ValidationErrorsWithVariants(Vec<ValidationError>);
+//! #     variants = [PasswordMinLengthError, InvalidEmailError];
+//! # );
+//! #
+//! let mut errors = ValidationErrors::default();
 //!
-//! # Examples
+//! // ❌ Without `vec-of-enum`: too verbose
+//! errors.push(ValidationError::InvalidEmail(InvalidEmailError::new("user@example.com".into(), "domain is blocked".into())));
+//!
+//! // ✅ With `vec-of-enum`: very concise
+//! errors.push(("user@example.com", "domain is blocked"));
+//! ```
+//!
+//! # Full example
 //!
 //! ```rust
 //! use derive_more::{Constructor, From};
 //! use serde::{Deserialize, Serialize};
 //!
-//! // Define some sample action structs
+//! // Define some sample validation error structs
 //! #[derive(Constructor, Serialize, Deserialize)]
-//! pub struct SignUpAction {
-//!     username: String,
-//!     password: String,
+//! pub struct PasswordMinLengthError {
+//!     min_length: usize,
 //! }
 //!
 //! #[derive(Constructor, Serialize, Deserialize)]
-//! pub struct SendMessageAction {
-//!     from: String,
-//!     to: String,
-//!     text: String,
+//! pub struct InvalidEmailError {
+//!     email: String,
+//!     reason: String,
 //! }
 //!
-//! // Define an enum that can contain any action
+//! // Define an enum that can contain any validation error
 //! #[derive(From, Serialize, Deserialize)]
-//! pub enum Action {
-//!     SignUp(SignUpAction),
-//!     SendMessage(SendMessageAction),
+//! pub enum ValidationError {
+//!     PasswordMinLength(PasswordMinLengthError),
+//!     InvalidEmail(InvalidEmailError),
 //! }
 //!
 //! // Convenience conversion
-//! impl From<(&str, &str)> for Action {
-//!     fn from((username, password): (&str, &str)) -> Self {
-//!         Self::SignUp(SignUpAction::new(username.into(), password.into()))
+//! impl From<(&str, &str)> for ValidationError {
+//!     fn from((email, reason): (&str, &str)) -> Self {
+//!         Self::InvalidEmail(InvalidEmailError::new(email.into(), reason.into()))
 //!     }
 //! }
 //!
-//! // Define a typed vector wrapper for Actions
+//! // Define a typed vector wrapper for ValidationErrors
 //! vec_of_enum::define!(
 //!     #[derive(Serialize, Deserialize)]
-//!     pub struct ActionVec(Vec<Action>);
+//!     pub struct ValidationErrors(Vec<ValidationError>);
 //! );
 //!
 //! // Define a typed vector wrapper that also automatically converts from variant types
 //! vec_of_enum::define!(
 //!     #[derive(Serialize, Deserialize)]
-//!     pub struct ActionVecWithVariants(Vec<Action>);
-//!     variants = [SignUpAction, SendMessageAction];
+//!     pub struct ValidationErrorsWithVariants(Vec<ValidationError>);
+//!     variants = [PasswordMinLengthError, InvalidEmailError];
 //! );
 //!
-//! // Usage
-//! let mut actions = ActionVec::default();
-//! // No need to call Action::from
-//! actions.push(SignUpAction::new("alice".into(), "qwerty".into()));
-//! // Even shorter if you have `impl From<(&str, &str)> for Action`
-//! actions.push(("alice", "qwerty"));
+//! let mut errors = ValidationErrors::default();
+//!
+//! // ❌ Without `vec-of-enum`: too verbose
+//! errors.push(ValidationError::InvalidEmail(InvalidEmailError::new("user@example.com".into(), "domain is blocked".into())));
+//!
+//! // ✅ With `vec-of-enum`: very concise
+//! errors.push(("user@example.com", "domain is blocked"));
 //! ```
 //!
 //! # Features
@@ -86,7 +134,6 @@
 //! ```
 //!
 //! This allows you to add any necessary derives that your application requires.
-//! ```
 
 #[macro_export]
 macro_rules! define {
