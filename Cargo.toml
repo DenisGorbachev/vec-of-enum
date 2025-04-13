@@ -11,7 +11,7 @@ keywords = []
 categories = []
 
 [package.metadata.details]
-title = "Helper macros for a Vec of enum values"
+title = "Vec of Enum"
 tagline = ""
 summary = ""
 announcement = ""
