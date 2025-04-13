@@ -2,7 +2,7 @@
 name = "vec-of-enum"
 version = "0.1.0"
 edition = "2021"
-description = "Helper macros for definind a vector of enum values"
+description = "Helper macros for a Vec of enum values"
 homepage = "https://github.com/DenisGorbachev/vec-of-enum"
 repository = "https://github.com/DenisGorbachev/vec-of-enum"
 readme = "README.md"
@@ -10,7 +10,7 @@ keywords = []
 categories = []
 
 [package.metadata.details]
-title = "Helper macros for definind a vector of enum values"
+title = "Helper macros for a Vec of enum values"
 tagline = ""
 summary = ""
 announcement = ""
