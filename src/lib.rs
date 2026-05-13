@@ -1,3 +1,4 @@
 //! This is a module-level comment for a Rust lib
 
-#![deny(unused_crate_dependencies)]
+#![deny(clippy::arithmetic_side_effects)]
+#![cfg_attr(not(test), deny(unused_crate_dependencies))]
