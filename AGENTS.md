@@ -1821,6 +1821,18 @@ stub-macro = { version = "0.2.1" }
 subtype = { git = "https://github.com/DenisGorbachev/subtype" }
 ```
 
+### fnox.toml
+
+```toml
+#:schema https://fnox.jdx.dev/schema.json
+
+if_missing = "error"
+
+[providers]
+keychain = { type = "keychain", service = "rust-private-lib-template" }
+pass = { type = "password-store", prefix = "rust-private-lib-template/" }
+```
+
 ### src/lib.rs
 
 ```rust
