@@ -432,7 +432,7 @@ You are running in a sandbox with limited network access.
 name = "rust-public-lib-template"
 version = "0.1.0"
 edition = "2024"
-rust-version = "1.85.0"
+rust-version = "1.93.1"
 description = "A template for a public Rust library"
 license = "Apache-2.0 OR MIT"
 homepage = "https://github.com/DenisGorbachev/rust-public-lib-template"
@@ -484,8 +484,8 @@ readme = { generate = false }
 if_missing = "error"
 
 [providers]
-keychain = { type = "keychain", service = "rust-pre-public-lib-template" }
-pass = { type = "password-store", prefix = "rust-pre-public-lib-template/" }
+keychain = { type = "keychain", service = "rust-public-lib-template" }
+pass = { type = "password-store", prefix = "rust-public-lib-template/" }
 ```
 
 ### src/lib.rs
