@@ -1778,7 +1778,7 @@ cfg_if::cfg_if! {
 name = "rust-private-lib-template"
 version = "0.1.0"
 edition = "2024"
-rust-version = "1.85.0"
+rust-version = "1.93.1"
 description = "A template for creating Rust private repositories."
 homepage = "https://github.com/DenisGorbachev/rust-private-template"
 repository = "https://github.com/DenisGorbachev/rust-private-template"
