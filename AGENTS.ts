@@ -271,6 +271,7 @@ const parts = (await Promise.all([
   includeCargoDependencyFileIfExists("errgonomic", "DOCS.md"),
   Promise.resolve("## Project files"),
   includeFile("Cargo.toml"),
+  includeFile("fnox.toml"),
   includeFileIfExists("src/main.rs"),
   includeFileIfExists("src/lib.rs"),
 ])).filter((part): part is string => !!part && part.length > 0)

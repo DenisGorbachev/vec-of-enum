@@ -476,6 +476,18 @@ readme = { generate = false }
 #subtype = { git = "https://github.com/DenisGorbachev/subtype" }
 ```
 
+### fnox.toml
+
+```toml
+#:schema https://fnox.jdx.dev/schema.json
+
+if_missing = "error"
+
+[providers]
+keychain = { type = "keychain", service = "rust-pre-public-lib-template" }
+pass = { type = "password-store", prefix = "rust-pre-public-lib-template/" }
+```
+
 ### src/lib.rs
 
 ```rust
