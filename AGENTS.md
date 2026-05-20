@@ -1778,7 +1778,7 @@ cfg_if::cfg_if! {
 name = "rust-pre-public-lib-template"
 version = "0.1.0"
 edition = "2024"
-rust-version = "1.85.0"
+rust-version = "1.93.1"
 description = "A template for creating Rust pre-public libs."
 homepage = "https://github.com/DenisGorbachev/rust-pre-public-lib-template"
 repository = "https://github.com/DenisGorbachev/rust-pre-public-lib-template"
@@ -1819,6 +1819,18 @@ standard-traits = { git = "https://github.com/DenisGorbachev/standard-traits" }
 strum = { version = "0.27.2", features = ["derive"] }
 stub-macro = { version = "0.2.1" }
 subtype = { git = "https://github.com/DenisGorbachev/subtype" }
+```
+
+### fnox.toml
+
+```toml
+#:schema https://fnox.jdx.dev/schema.json
+
+if_missing = "error"
+
+[providers]
+keychain = { type = "keychain", service = "rust-pre-public-lib-template" }
+pass = { type = "password-store", prefix = "rust-pre-public-lib-template/" }
 ```
 
 ### src/lib.rs
