@@ -413,9 +413,16 @@ A function marked with `#[test]` or `#[tokio::test]`.
 * Write `macro_rules!` macros to reduce boilerplate
 * If you see similar code in different places, write a macro and replace the similar code with a macro call
 
+### Shell
+
+* For shell scripts and commands that will be read by the user (written per direct request of the user):
+  * Use long options
+* For shell scripts and commands what won't be read by the user (written to accomplish a local task):
+  * Use short options
+
 ### Cargo.toml
 
-* Don't define package features contain only a single optional dependency (such features are already defined by cargo automatically)
+* Don't define package features with only a single optional dependency (such features are already defined by cargo automatically)
 
 ### Sandbox
 
@@ -461,11 +468,14 @@ exclude = [
     "*.local.*",
     "doc/dev",
     "specs",
+    "AGENTS.ts",
     "README.ts",
     "AGENTS*.md",
     "CLAUDE*.md",
+    "deno.lock",
     "deno.json",
     "commitlint.config.mjs",
+    "fnox.toml",
     "lefthook.yml",
     "mise.toml",
     "rumdl.toml",
