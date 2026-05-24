@@ -4,8 +4,10 @@
 
 # Vec of Enum
 
+[![Build](https://github.com/DenisGorbachev/vec-of-enum/actions/workflows/ci.yml/badge.svg)](https://github.com/DenisGorbachev/vec-of-enum)
 [![Documentation](https://docs.rs/vec-of-enum/badge.svg)](https://docs.rs/vec-of-enum)
 
+<!-- crate documentation start -->
 A helper struct to manage a `Vec` of `enum` values. Reduces boilerplate, implements useful traits.
 
 ```rust
@@ -76,11 +78,11 @@ errors.push(("user@example.com", "domain is blocked"));
 
 The wrapper struct created using the `define!` macro:
 
-* Is `#[repr(transparent)]` for zero-cost abstraction
-* Implements `Deref` and `DerefMut` to `Vec<T>` for access to all Vec methods
-* Provides `new()`, `push()`, and `extend_from()` methods
-* Implements `Default`, `Extend`, `IntoIterator`, `From<Vec<T>>`, and `Into<Vec<T>>`
-* Supports automatic conversions from variant types when using the `variants = [...]` option
+- Is `#[repr(transparent)]` for zero-cost abstraction
+- Implements `Deref` and `DerefMut` to `Vec<T>` for access to all Vec methods
+- Provides `new()`, `push()`, and `extend_from()` methods
+- Implements `Default`, `Extend`, `IntoIterator`, `From<Vec<T>>`, and `Into<Vec<T>>`
+- Supports automatic conversions from variant types when using the `variants = [...]` option
 
 ## Custom Derives
 
@@ -100,6 +102,7 @@ vec_of_enum::define!(
 ```
 
 This allows you to add any necessary derives that your application requires.
+<!-- crate documentation end -->
 
 ## Installation
 

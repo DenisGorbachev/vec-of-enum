@@ -1,7 +1,8 @@
 [package]
 name = "vec-of-enum"
 version = "0.1.1"
-edition = "2021"
+edition = "2024"
+rust-version = "1.85.0"
 description = "Helper macros for a Vec of enum values"
 license = "Apache-2.0 OR MIT"
 homepage = "https://github.com/DenisGorbachev/vec-of-enum"
@@ -9,6 +10,22 @@ repository = "https://github.com/DenisGorbachev/vec-of-enum"
 readme = "README.md"
 keywords = []
 categories = []
+exclude = [
+    ".*",
+    "*.local.*",
+    "doc/dev",
+    "specs",
+    "README.ts",
+    "AGENTS*.md",
+    "CLAUDE*.md",
+    "deno.json",
+    "commitlint.config.mjs",
+    "lefthook.yml",
+    "mise.toml",
+    "rumdl.toml",
+    "rustfmt.toml",
+    ".yolobox"
+]
 
 [package.metadata.details]
 title = "Vec of Enum"
