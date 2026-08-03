@@ -100,7 +100,8 @@ Notes:
   * "+" - "Think about this finding again, then apply the best fix according to your thinking process"
   * "+ {number}" - "Apply proposed fix at {number}"
   * "-" - "Don't apply any fixes"
-  * other - respond normally (keep the number in your response)
+  * other - respond normally (keep the `ctid` in your response)
+* If there are no more actionable items in the thread identified by a specific `ctid`: drop this `ctid` from your response.
 
 ## Debugging workflow
 
