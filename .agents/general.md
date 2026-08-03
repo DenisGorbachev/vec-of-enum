@@ -458,6 +458,9 @@ A function marked with `#[test]` or `#[tokio::test]`.
 
 * Write `macro_rules!` macros to reduce boilerplate
 * If you see similar code in different places, write a macro and replace the similar code with a macro call
+* If the macros has variadic args:
+  * Then: do add `$(,)?`
+  * Else: don't add `$(,)?`
 
 ## Shell
 
