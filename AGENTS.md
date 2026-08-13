@@ -415,6 +415,9 @@ Notes:
   ```
 - Prefer short method syntax over long trait-path syntax (prefer `value.method(arg)` over `Trait::method(value, arg)`)
 - Generic helper functions must be in `src/functions` (one file per function)
+- If clippy reports `too_many_arguments`:
+  - Don't use tuples to silence the lint
+  - Consider refactoring the code for better separation of concerns
 
 #### Struct derives
 
