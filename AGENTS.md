@@ -130,7 +130,7 @@ Notes:
 
 - Use `fd` and `rg` instead of `find` and `grep`
 - Use `cargo add` to add dependencies at their latest versions
-- Set the timeout and `yield_time_ms` to at least 300000 ms for the following commands: `mise run agent:on:stop`, `cargo build`, `git commit`
+- Set the command-execution tool call’s timeout parameter and `yield_time_ms` to at least 300000 ms for the following commands: `mise run agent:on:stop`, `cargo build`, `git commit`
 
 #### Recommended crates
 
