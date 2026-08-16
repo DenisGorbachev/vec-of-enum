@@ -74,12 +74,13 @@ Notes:
   - Examples
     - A task to write `impl From<Foo> for Bar` where `Foo` can't actually be infallibly converted to `Bar` (would require calling `unwrap`, which is bad) - in this case you should write `impl TryFrom<Foo> for Bar` and reply with "Foo can't be infallibly converted to Bar, so I implemented a fallible conversion instead".
     - A task to write a trait impl that only returns an error - in this case you should not write the trait impl but reply with "trait X can't be implemented for Foo because ..."
-- If a sentence starts with "Proposal: ":
+- If a sentence starts with "Idea: ":
   - Evaluate it thorougly.
   - If you agree:
     - Then: implement it.
     - Else: explain why you didn't implement it and brainstorm solutions.
-- If you resolve the blockers, remove them from blockers.md
+- If you resolve the findings, remove them from [findings.md](#findingsmd)
+  - If [findings.md](#findingsmd) becomes empty, remove it
 
 ## Review workflow
 
