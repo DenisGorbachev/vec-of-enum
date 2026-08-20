@@ -6,6 +6,7 @@ permissions:
   pull-requests: read
 
 env:
+  FNOX_NON_INTERACTIVE: "1"
   RUSTFLAGS: >-
     -Dwarnings
     -Clink-arg=-fuse-ld=mold
@@ -42,7 +43,7 @@ jobs:
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
         with:
           cache-bin: false # mise already caches CARGO_HOME
-      - run: fnox --profile test --non-interactive ci-redact
+      - run: fnox --profile test ci-redact
         env:
           FNOX_AGE_KEY: ${{ secrets.FNOX_AGE_KEY }}
       - run: mise run check

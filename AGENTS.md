@@ -2113,6 +2113,7 @@ run = [{ task = "test:code", args = ["--cargo-quiet", "--hide-progress-bar", "--
 #:schema https://fnox.jdx.dev/schema.json
 
 if_missing = "error"
+env = "exec"
 
 [providers]
 keychain = { type = "keychain", service = "rust-private-lib-template" }

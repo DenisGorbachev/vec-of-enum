@@ -16,25 +16,76 @@ assert_toml_value() {
 }
 
 validate_fnox_config() {
-  local config_json=${1:?}
-  if ! jq --exit-status '
-    .providers.age as $age
-    | if (
-        ($age | type) == "object"
-        and $age.type == "age"
-        and ($age.recipients | type) == "array"
-      )
-      then
-        ($age.recipients | length) >= 1
-        and all(
-          $age.recipients[];
-          if type == "string" then test("^age1[0-9a-z]+$") else false end
+  local config_json=${1:?} actual_type recipient_count invalid_recipient_indexes invalid_test_secrets
+
+  actual_type=$(jq --raw-output '.providers.age | type' <<<"$config_json")
+  if [[ $actual_type != object ]]; then
+    echo "providers.age must be a table, got $actual_type" >&2
+    return 1
+  fi
+
+  if ! jq --exit-status '.providers.age.type == "age"' >/dev/null <<<"$config_json"; then
+    echo 'providers.age.type must be "age"' >&2
+    return 1
+  fi
+
+  actual_type=$(jq --raw-output '.providers.age.recipients | type' <<<"$config_json")
+  if [[ $actual_type != array ]]; then
+    echo "providers.age.recipients must be an array, got $actual_type" >&2
+    return 1
+  fi
+
+  recipient_count=$(jq --raw-output '.providers.age.recipients | length' <<<"$config_json")
+  if ((recipient_count < 2)); then
+    echo "providers.age.recipients must contain at least two recipients, got $recipient_count" >&2
+    return 1
+  fi
+
+  invalid_recipient_indexes=$(jq --raw-output '
+    .providers.age.recipients
+    | to_entries
+    | map(
+        select(
+          .value
+          | if type == "string" then (test("^age1[0-9a-z]+$") | not) else true end
         )
-        and (($age.recipients | unique | length) == ($age.recipients | length))
-      else false
-      end
+        | (.key | tostring)
+      )
+    | join(", ")
+  ' <<<"$config_json")
+  if [[ -n $invalid_recipient_indexes ]]; then
+    echo "providers.age.recipients contains invalid native age recipients at indexes: $invalid_recipient_indexes" >&2
+    return 1
+  fi
+
+  if ! jq --exit-status '
+    (.providers.age.recipients | length)
+    == (.providers.age.recipients | unique | length)
   ' >/dev/null <<<"$config_json"; then
-    echo "providers.age must have type = \"age\" and a non-empty array of unique age recipients" >&2
+    echo "providers.age.recipients must not contain duplicates" >&2
+    return 1
+  fi
+
+  actual_type=$(jq --raw-output '(.profiles.test.secrets // {}) | type' <<<"$config_json")
+  if [[ $actual_type != object ]]; then
+    echo "profiles.test.secrets must be a table, got $actual_type" >&2
+    return 1
+  fi
+
+  invalid_test_secrets=$(jq --raw-output '
+    (.profiles.test.secrets // {})
+    | to_entries
+    | map(
+        select(
+          .value
+          | if type == "object" then .provider != "age" else true end
+        )
+        | .key
+      )
+    | join(", ")
+  ' <<<"$config_json")
+  if [[ -n $invalid_test_secrets ]]; then
+    echo "test secrets must use provider = \"age\": $invalid_test_secrets" >&2
     return 1
   fi
 }
@@ -57,6 +108,6 @@ project_root=${MISE_PROJECT_ROOT:-$(pwd)}
 fnox_toml=${fnox_toml:-"$project_root/fnox.toml"}
 project_name=$(mise --cd "$project_root" run git:repo-name)
 assert_toml_value "$fnox_toml" "providers.keychain.service" "$project_name"
-assert_toml_value "$fnox_toml" "providers.pass.prefix" "$project_name/"
+assert_toml_value "$fnox_toml" "env" "exec"
 config_json=$(taplo get --file-path "$fnox_toml" --output-format json)
 validate_fnox_config "$config_json"
