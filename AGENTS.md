@@ -2117,6 +2117,10 @@ if_missing = "error"
 [providers]
 keychain = { type = "keychain", service = "rust-private-lib-template" }
 pass = { type = "password-store", prefix = "rust-private-lib-template/" }
+age = { type = "age", recipients = [
+    "age1sf4r4amev2svqr6llwg8hgtz9n7p5qdh7hh0mavcshzfrmgfduksnq3hql",
+    "age1605gsnxpe536sprwccyumq74veg0g80u55n8ggems0t8deau6qdsfnq3m3"
+] }
 ```
 
 #### Cargo.toml
