@@ -138,7 +138,7 @@ copy_config_with_metadata() {
 validate_age_config() {
   local project_root=${1:?} fnox_path=${2:?}
   if ! MISE_PROJECT_ROOT="$project_root" "$project_root/.mise/tasks/fix/fnox.sh" \
-    --fnox-toml "$fnox_path"; then
+    --fnox-toml "$fnox_path" --allow-pass-test-secrets; then
     echo "fnox config validation failed: $fnox_path" >&2
     return 1
   fi
