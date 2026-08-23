@@ -1,6 +1,17 @@
-# API client package concepts
+# API client
 
-## API client Cargo.toml
+## Package requirements
+
+- Must contain a `Cargo.toml` that passes [Cargo.toml requirements](#cargotoml-requirements)
+- Must contain [request cow types](#request-cow-type-requirements) for each request in the API
+- Must contain [response types](#response-type-requirements) for each response in the API
+- Must have the following layout:
+  - Request data types in `request` module
+  - Response data types in `response` module
+  - Common data types in `common` module
+  - [Technical types](#technical-type) at the top level (attached to src/lib.rs)
+
+## Cargo.toml requirements
 
 - Must have dependencies:
   - `reqwest`
@@ -13,28 +24,20 @@
   - `url-macro`
 - Every version under `dependencies` key must be specified only up to the first non-zero part (good: "1", "0.3", bad: "1.0", "0.3.3")
 
-## API client lib crate
+## Key requirements
 
-- Must contain [request cow types](#request-cow-type) for each request in the API
-- Must contain [response types](#response-type) for each response in the API
-- Must have the following layout:
-  - Request data types in `request` module
-  - Response data types in `response` module
-  - Common data types in `common` module
-  - [Technical types](#technical-type) at the top level (attached to src/lib.rs)
+- Must be a type alias of `secrecy::SecretString`.
 
-## Key
+## RateLimits requirements
 
-A type alias for API key as `secrecy::SecretString`.
-
-## RateLimits
-
+- Must be a struct
 - Every field must have a type exported from `governor`
 - Must have impls:
   - `Default`
 
-## HTTP Client
+## HTTP Client requirements
 
+- Must be a struct
 - Must have attributes:
   - `#[derive(From, Into, Eq, PartialEq, Clone, Debug)]`
 - Must have fields:
@@ -51,50 +54,43 @@ A type alias for API key as `secrecy::SecretString`.
 
 ## Technical type
 
-One of:
+A type that passes one of the following requirements:
 
-- [Client](#http-client)
-- [Key](#key)
-- [RateLimits](#ratelimits)
+- [Client requirements](#http-client-requirements)
+- [Key requirements](#key-requirements)
+- [RateLimits requirements](#ratelimits-requirements)
 
-## API interface type
+## API interface type requirements
 
 - Must have derives: `Clone`, `Debug`.
 - Should have derives: `Serialize`, `Deserialize`, `Eq`, `PartialEq`, `Hash`.
 - Should not contain manual `Serialize` and `Deserialize` impls
 - Should use type-level `serde` attributes (e.g. `rename_all`)
 
-## Request cow type
+## Request cow type requirements
 
-- Must be an [API interface type](#api-interface-type)
+- Must pass [API interface type](#api-interface-type-requirements)
 - Ident must end with "Request".
 - Every field must be a `Cow`.
 - Every field must have its own lifetime.
   - Lifetime name should be short
   - Lifetime name should match the name of the field (e.g. first letter)
 
-## Request ref type
+## Request ref type requirements
 
-- Must be an [API interface type](#api-interface-type)
+- Must pass [API interface type](#api-interface-type-requirements)
 - Ident must end with "RequestRef".
 - Must have derives: `Copy`.
 - Every field must be an immutable reference (not owned).
 
-## Request own type
+## Request own type requirements
 
-A type with owned data for making an API request.
-
-Requirements:
-
-- Must be an [API interface type](#api-interface-type)
+- Must pass [API interface type](#api-interface-type-requirements)
 - Ident must end with "RequestOwn".
 - Every field must be owned (not a reference).
 
-## Response type
+## Response type requirements
 
-A type with owned data for an API response.
-
-Requirements:
-
-- Must be an [API interface type](#api-interface-type)
+- Must pass [API interface type](#api-interface-type-requirements)
 - Ident must end with "Response".
+- Every field must be owned (not a reference).
