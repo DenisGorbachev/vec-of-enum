@@ -13,9 +13,13 @@ export const PackageDetailsSchema = z.object({
   profiles: z.array(z.string().min(1)).default([]),
 }).default({})
 
-export const PackageMetadataSchema = z.object({
+const PackageMetadataObjectSchema = z.object({
   details: PackageDetailsSchema,
 })
+
+export const PackageMetadataSchema = PackageMetadataObjectSchema.nullable()
+  .transform((value) => PackageMetadataObjectSchema.parse(value ?? {}))
+  .default({})
 
 /// Validates fields shared by metadata consumers while keeping arbitrary package metadata opaque.
 export const CargoPackageSchema = z.object({
