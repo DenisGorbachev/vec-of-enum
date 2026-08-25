@@ -107,7 +107,8 @@ Notes:
 #### Messages from agent to user
 
 - Use `~` in paths
-- Give each independently addressable item in a multi-item message a unique [chat thread ID](#chat-thread-id)
+- Format your message as a sequence of independently addressable items where each item begins with a [chat thread id heading](#chat-thread-id-heading)
+- Don't mention successful verifications and checks unless asked explicitly.
 
 #### Commands
 
@@ -497,6 +498,16 @@ Examples:
 Notes:
 
 - Should match the thread topic
+
+#### Chat thread id heading
+
+A Markdown heading level 3 that contains only [chat thread id](#chat-thread-id).
+
+Examples:
+
+- `### RVC`
+- `### AKE`
+- `### LMY`
 
 #### findings.md
 
