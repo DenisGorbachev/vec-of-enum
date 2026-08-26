@@ -107,7 +107,8 @@ Notes:
 #### Messages from agent to user
 
 - Use `~` in paths
-- Give each independently addressable item in a multi-item message a unique [chat thread ID](#chat-thread-id)
+- Format your message as a sequence of independently addressable items where each item begins with a [chat thread id heading](#chat-thread-id-heading)
+- Don't mention successful verifications and checks unless asked explicitly.
 
 #### Commands
 
@@ -427,13 +428,11 @@ Notes:
 
 #### Arithmetics
 
-- Never use the following operators: `+, +=, -, -=, *, *=, /, /=, %, %=, -, <<, <<=, >>, >>=`
-- Never use the following traits: `core::ops::{Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign, Rem, RemAssign, Neg, Shl, ShlAssign, Shr, ShrAssign}`
+- Don't use the impls of traits `core::ops::{Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign, Rem, RemAssign, Neg, Shl, ShlAssign, Shr, ShrAssign}` or their operators unless they don't panic or silently overflow
+- Write and use arithmetic trait impls that don't panic or silently overflow
 - Prefer `checked` versions of arithmetic operations
 - Every call to an `overflowing`, `saturating`, `wrapping` version must have a single-line comment above it that starts with "SAFETY: " and describes why calling this version is safe in this specific case
 - Use `num` crate items if necessary (for example, to implement a function that calls arithmetic methods on a generic type)
-
-Note: the arithmetic operators and traits are banned because they may panic or silently overflow.
 
 #### Index access
 
@@ -498,6 +497,16 @@ Notes:
 
 - Should match the thread topic
 
+#### Chat thread id heading
+
+A Markdown heading level 3 that contains only [chat thread id](#chat-thread-id).
+
+Examples:
+
+- `### RVC`
+- `### AKE`
+- `### LMY`
+
 #### findings.md
 
 - If it exists:
@@ -519,7 +528,10 @@ Notes:
 
 ### Guidelines for `subtype`
 
-- The macro calls that begin with `subtype` (for example, `subtype!` and `subtype_string!`) expand to newtypes.
+- Define newtypes as ordinary structs with explicit `From` / `TryFrom` impls.
+- The macro calls that begin with `subtype` (for example, `subtype!` and `subtype_string!`) are legacy APIs that expand to newtypes.
+  - Don't use them in new code because their checker and preprocessor concepts have been superseded by explicit conversion impls.
+- Use the `SerializeTransparent` derive for a refined newtype that must serialize identically to its inner field while using Serde's `try_from` container attribute for validated deserialization.
 
 ### Error handling
 
