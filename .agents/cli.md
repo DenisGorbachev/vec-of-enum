@@ -93,7 +93,13 @@ pub use print_command::*;
 A struct that contains fields for CLI arguments.
 
 - Must have a name that is a concatenation of all command names leading up to and including this command name, and ends with `Command` (see example above)
-- Must derive `clap::Parser`
+- Must have at least the following attributes:
+  - `derive`
+    - Must contain at least:
+      - `Parser` (`use clap::Parser`)
+  - `command`
+    - Must contain at least:
+      - `flatten_help = true`
 - Must be attached to a parent module: if it's a top-level command: `src/lib.rs`, else: `src/command.rs`
 - For each field:
   - If the field has a collection type (e.g. `Vec`), then it must have attribute `num_args = 1..`
@@ -113,7 +119,10 @@ Command example:
 An enum that contains variants for CLI subcommands.
 
 - Must have a name that is a concatenation of all command names leading up to and including this command name, and ends with `Subcommand` (see example above)
-- Must derive `clap::Subcommand`
+- Must have at least the following attributes:
+  - `derive`
+    - Must contain at least:
+      - `Subcommand` (`use clap::Subcommand`)
 - Must be located in the same file as its parent command struct
 - Each variant must be a tuple variant containing exactly one command
 
