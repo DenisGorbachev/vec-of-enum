@@ -135,7 +135,6 @@
 //!
 //! This allows you to add any necessary derives that your application requires.
 
-#![deny(clippy::arithmetic_side_effects)]
 #![cfg_attr(not(test), deny(unused_crate_dependencies))]
 
 #[macro_export]

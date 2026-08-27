@@ -1,13 +1,13 @@
-[package]
-name = "vec-of-enum"
+[workspace]
+resolver = "3"
+
+[workspace.package]
 version = "0.1.1"
 edition = "2024"
-rust-version = "1.85.0"
-description = "Helper macros for a Vec of enum values"
+rust-version = "1.88.0"
 license = "Apache-2.0 OR MIT"
 homepage = "https://github.com/DenisGorbachev/vec-of-enum"
 repository = "https://github.com/DenisGorbachev/vec-of-enum"
-readme = "README.md"
 keywords = []
 categories = []
 exclude = [
@@ -16,6 +16,7 @@ exclude = [
     "doc/dev",
     "specs",
     "AGENTS.ts",
+    "CargoMetadata.ts",
     "README.ts",
     "AGENTS*.md",
     "CLAUDE*.md",
@@ -23,19 +24,45 @@ exclude = [
     "deno.json",
     "commitlint.config.mjs",
     "fnox.toml",
-    "lefthook.yml",
     "mise.toml",
     "rumdl.toml",
     "rustfmt.toml",
     ".yolobox"
 ]
 
+[workspace.metadata.details]
+name = "vec-of-enum"
+title = "Vec of Enum"
+readme = {}
+
+[workspace.lints.rust]
+redundant_imports = "deny"
+unused_import_braces = "deny"
+# unused_qualifications must not be "deny" because our code style has multiple `use Foo::*;`, and some macros (derive_more::Display, strum::Display, strum::EnumString) produce code with full qualifications
+# unused_qualifications = "deny"
+
+[workspace.lints.clippy]
+absolute_paths = "deny"
+arithmetic_side_effects = "deny"
+
+[package]
+name = "vec-of-enum"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "Helper macros for a Vec of enum values"
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+exclude.workspace = true
+
 [package.metadata.details]
 title = "Vec of Enum"
-tagline = ""
-summary = ""
-announcement = ""
-readme = {}
+
+[lints]
+workspace = true
 
 [dependencies]
 

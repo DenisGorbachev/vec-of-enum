@@ -110,6 +110,10 @@ This allows you to add any necessary derives that your application requires.
 cargo add vec-of-enum
 ```
 
+## Other packages
+
+This workspace has no other packages.
+
 ## Gratitude
 
 Like the project? [⭐ Star this repo](https://github.com/DenisGorbachev/vec-of-enum) on GitHub!
