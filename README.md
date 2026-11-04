@@ -104,21 +104,21 @@ vec_of_enum::define!(
 This allows you to add any necessary derives that your application requires.
 <!-- crate documentation end -->
 
-### Installation
+## Installation
 
 ```shell
 cargo add vec-of-enum
 ```
 
-### Other packages
+## Other packages
 
 This workspace has no other packages.
 
-### Gratitude
+## Gratitude
 
 Like the project? [⭐ Star this repo](https://github.com/DenisGorbachev/vec-of-enum) on GitHub!
 
-### License
+## License
 
 [Apache-2.0](LICENSE-APACHE) or [MIT](LICENSE-MIT).
 

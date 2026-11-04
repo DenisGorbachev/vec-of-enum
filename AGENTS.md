@@ -857,7 +857,7 @@ ignored = ["derive_more", "serde"]
 //! errors.push(("user@example.com", "domain is blocked"));
 //! ```
 //!
-//! # Full example
+//! ## Full example
 //!
 //! ```rust
 //! use derive_more::{Constructor, From};
@@ -911,7 +911,7 @@ ignored = ["derive_more", "serde"]
 //! errors.push(("user@example.com", "domain is blocked"));
 //! ```
 //!
-//! # Features
+//! ## Features
 //!
 //! The wrapper struct created using the `define!` macro:
 //!
@@ -921,7 +921,7 @@ ignored = ["derive_more", "serde"]
 //! - Implements `Default`, `Extend`, `IntoIterator`, `From<Vec<T>>`, and `Into<Vec<T>>`
 //! - Supports automatic conversions from variant types when using the `variants = [...]` option
 //!
-//! # Custom Derives
+//! ## Custom Derives
 //!
 //! You can add any derive macros to your struct definition, and they will be applied to
 //! the generated struct. For example:
