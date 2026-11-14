@@ -939,8 +939,6 @@ ignored = ["derive_more", "serde"]
 //!
 //! This allows you to add any necessary derives that your application requires.
 
-#![cfg_attr(not(test), deny(unused_crate_dependencies))]
-
 #[macro_export]
 macro_rules! define {
     (
